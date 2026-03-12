@@ -1,0 +1,15 @@
+﻿@page "/dashboard"
+
+@attribute [Authorize]
+@layout MainLayout
+
+
+<AuthorizeView>
+    <Authorized>
+        <h2>Welcome, @context.User.Identity.Name!</h2>
+        <!-- Dashboard content here -->
+    </Authorized>
+    <NotAuthorized>
+        <p>You must log in to view the dashboard.</p>
+    </NotAuthorized>
+</AuthorizeView>
