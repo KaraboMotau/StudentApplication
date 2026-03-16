@@ -1,13 +1,15 @@
 ﻿
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
+using Microsoft.EntityFrameworkCore;
 using StudentDomain.Entities;
+using System.Collections.Generic;
+using System.Reflection.Emit;
 
 
 namespace StudentApplicationServer.DataAccess
 {
-    public class StudentApplicationDbContext : DbContext
+    public class StudentApplicationDbContext : IdentityDbContext
     {
 
         public StudentApplicationDbContext(DbContextOptions<StudentApplicationDbContext> options) : base(options)
@@ -20,7 +22,7 @@ namespace StudentApplicationServer.DataAccess
         public DbSet<Student> Students { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        /*protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Student>().HasData(
                 new Student { StudentNumber = 12345, Surname = "Motau", Birthdate = "23/10/1990", Gender = "M", Initials = "KT" },
@@ -58,6 +60,6 @@ namespace StudentApplicationServer.DataAccess
 
 
         }
+        */
     }
 }
-

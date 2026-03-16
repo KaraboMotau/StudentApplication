@@ -1,16 +1,18 @@
-using StudentApplicationServer.Components;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StudentApplicationServer.DataAccess;
-
-using Microsoft.AspNetCore.Identity;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
 builder.Services.AddDbContext<StudentApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<StudentApplicationDbContext>();
+/*builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<StudentApplicationDbContext>();
 
@@ -18,42 +20,36 @@ builder.Services.AddIdentityServer()
     .AddApiAuthorization<IdentityUser, StudentApplicationDbContext>();
 
 builder.Services.AddAuthentication()
-    .AddIdentityServerJwt();
+    .AddIdentityServerJwt();*/
 
-
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+builder.Services.AddControllers();
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+app.UseCors(policy =>
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    policy.AllowAnyOrigin()
+          .AllowAnyMethod()
+          .AllowAnyHeader();
+});
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.UseSwaggerUI(options => {
+        options.SwaggerEndpoint("/openapi/v1.json", "api");
+    });
 }
 
-app.UseAuthentication();
-app.UseIdentityServer();
-app.UseAuthorization();
+app.MapIdentityApi<IdentityUser>();
 
 app.UseHttpsRedirection();
 
+app.UseAuthorization();
 
-app.UseAntiforgery();
-
-app.MapStaticAssets();
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
-
-
-
-/*app.UseEndpoints(endpoints =>
-{
-    endpoints.MapBlazorHub();
-    endpoints.MapFallbackToPage("/_Host"); 
-});*/
-
+app.MapControllers();
 
 app.Run();

@@ -1,0 +1,25 @@
+﻿@page "/profile"
+@inject HttpClient client
+
+
+@attribute [Authorize]
+
+<h3>Profile</h3>
+
+@code {
+    public UserProfile? userProfile = null;
+    private string errorMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            errorMessage = "Loading....";
+            userProfile = await client.GetFromJsonAsync<UserProfile>("api/Account/profile");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading profile: {ex.Message}";
+        }
+    }
+}
