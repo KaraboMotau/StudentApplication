@@ -1,0 +1,124 @@
+﻿@page "/students"
+@inject HttpClient Http
+
+<h3>Students</h3>
+
+@if (students == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Surname</th>
+                <th>Initials</th>
+                <th>Gender</th>
+                <th>Email</th>
+                <th>Date Of Birth</th>
+                <th>Phone</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in students)
+            {
+                <tr>
+                    <td>@s.Id</td>
+                    <td>@s.Surname</td>
+                    <td>@s.Email</td>
+                    <td>@s.DateOfBirth</td>
+                    <td>@s.Initials</td>
+                    <td>@s.Phone</td>
+
+                    <td>
+                        <button @onclick="() => EditStudent(s)">Edit</button>
+                        <button @onclick="() => DeleteStudent(s.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h4>Add / Edit Student</h4>
+<input @bind="currentStudent.Surname" placeholder="Surname" />
+<input @bind="currentStudent.DateOfBirth" type="date" placeholder="Date Of Birth" />
+<input @bind="currentStudent.Initials" type="text" placeholder="Initials" />
+<input @bind="currentStudent.Email" type="email" placeholder="Email" />
+<input @bind="currentStudent.Phone" type="text" placeholder="Phone" />
+
+<button @onclick="SaveStudent">Save</button>
+
+<p>@message</p>
+
+@code {
+    private List<Student>? students;
+    private Student currentStudent = new Student();
+    private string message = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadStudents();
+    }
+
+    private async Task LoadStudents()
+    {
+        students = await Http.GetFromJsonAsync<List<Student>>("api/students");
+    }
+
+    [Authorize]
+    private void EditStudent(Student s)
+    {
+        currentStudent = new Student { Id = s.Id, Surname = s.Surname, DateOfBirth = s.DateOfBirth,Phone=s.Phone,
+        Email = s.Email, Initials = s.Initials};
+        
+    }
+
+    [Authorize]
+    private async Task SaveStudent()
+    {
+        if (currentStudent.Id == 0)
+        {
+            // Create
+            var response = await Http.PostAsJsonAsync("api/students", currentStudent);
+
+            if (response.IsSuccessStatusCode)
+                message = "Student created successfully!";
+        }
+        else
+        {
+            // Update
+            var response = await Http.PutAsJsonAsync($"api/students/{currentStudent.Id}", currentStudent);
+            if (response.IsSuccessStatusCode)
+                message = "Student updated successfully!";
+        }
+
+        currentStudent = new Student();
+        await LoadStudents();
+    }
+
+    [Authorize(Roles = "Admin")]
+    private async Task DeleteStudent(int id)
+    {
+        var response = await Http.DeleteAsync($"api/students/{id}");
+        if (response.IsSuccessStatusCode)
+            message = "Student deleted successfully!";
+        await LoadStudents();
+    }
+
+    public class Student
+    {
+        public int Id { get; set; }
+        public string Surname { get; set; } = string.Empty;
+        public DateTime DateOfBirth { get; set; }
+        public string Initials { get; set; }
+        public string Gender { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+
+
+    }
+}

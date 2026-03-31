@@ -10,8 +10,9 @@ namespace StudentDomain.Entities
     public class Course
     {
         [Key]
-        public int CourseCode { get; set; }
-        public string CourseName { get; set; }
+        public int CourseId { get; set; }
+        public string CourseName { get; set; } = string.Empty;
+        public string CourseCode { get; set; } 
 
         public ICollection<Student> Students { get; set; }
         public ICollection<Enrollment> Enrollments { get; set; }

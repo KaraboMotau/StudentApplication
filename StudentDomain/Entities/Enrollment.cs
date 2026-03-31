@@ -11,8 +11,8 @@ namespace StudentDomain.Entities
     {
         [Key]
         public int EnrollmentId { get; set; }
-        public string Status { get; set; }
-        public int StudentNumber { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public int StudentId { get; set; }
         public Student Students { get; set; }
         public int CourseCode { get; set; }
         

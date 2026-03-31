@@ -12,7 +12,7 @@ namespace StudentDomain.Entities
     public class Faculty
     {
         [Key]
-        public int FacultyCode { get; set; }
+        public int FacultyId { get; set; }
         public string FacultyName { get; set; }
    
         public ICollection<Course> Courses { get; set; }

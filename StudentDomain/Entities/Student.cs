@@ -5,12 +5,12 @@ namespace StudentDomain.Entities
     public class Student
     {
         [Key]
-        public int StudentNumber { get; set; }
+        public int StudentId { get; set; }
         public string Surname { get; set; }
         public string Initials { get; set; }
         public string Gender { get; set; }
-        public string Email { get; set; }     
-
+        public string Email { get; set; }
+        public string Phone { get; set; }
         //[Display(Name = "Date of Birth")]
         //[DataType(DataType.Date)]
         //[DisplayFormat(DataFormatString = "{0:dd MMM yyyy}", ApplyFormatInEditMode = true)]

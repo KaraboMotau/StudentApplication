@@ -1,4 +1,4 @@
-﻿namespace StudentApplicationServer.Models
+﻿namespace StudentApplication.Server.Models
 {
     public class UserProfile
     {
